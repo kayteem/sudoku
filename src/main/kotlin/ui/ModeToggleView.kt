@@ -17,10 +17,10 @@ class ModeToggleView(
 
         toggleButton.setOnAction {
             if (toggleButton.isSelected) {
-                controller.switchMode(GameMode.RAETSEL)
+                controller.switchMode(GameMode.RIDDLE)
                 toggleButton.text = "Rätsel-Modus"
             } else {
-                controller.switchMode(GameMode.ERSTELLUNG)
+                controller.switchMode(GameMode.CREATION)
                 toggleButton.text = "Erstellungs-Modus"
             }
         }

@@ -23,10 +23,10 @@ class SudokuView : BorderPane() {
         toggle.setOnAction {
             if (toggle.isSelected) {
                 toggle.text = "Rätsel-Modus"
-                controller.switchMode(GameMode.RAETSEL)
+                controller.switchMode(GameMode.RIDDLE)
             } else {
                 toggle.text = "Erstellungs-Modus"
-                controller.switchMode(GameMode.ERSTELLUNG)
+                controller.switchMode(GameMode.CREATION)
             }
         }
         return toggle

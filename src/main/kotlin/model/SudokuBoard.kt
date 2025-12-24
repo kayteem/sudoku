@@ -14,7 +14,6 @@ class SudokuBoard {
                 val cell = cells[row][col]
                 cell.value = null
                 cell.candidates.clear()
-                cell.activeCandidates.clear()
             }
         }
     }
