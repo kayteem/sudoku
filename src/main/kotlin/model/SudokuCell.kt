@@ -10,15 +10,12 @@ class SudokuCell {
         candidates.clear()
     }
 
-    fun toggleCandidate(digit: Int) {
-        if (digit !in 1..9)
-            return
+    fun addCandidate(candidate: Int) {
+        candidates += candidate
+    }
 
-        if (digit in candidates) {
-            candidates.remove(digit)
-        } else {
-            candidates.add(digit)
-        }
+    fun removeCandidate(candidate: Int) {
+        candidates -= candidate
     }
 
 }

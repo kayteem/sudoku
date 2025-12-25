@@ -33,7 +33,7 @@ class SudokuCellView(
         valueText.font = Font.font(24.0)
 
         candidatesGridView = CandidatesGridView(
-            gameMode = controller.mode,
+            controller = controller,
             cell = cell,
             updateParentCallback = ::updateView
         )
@@ -50,29 +50,13 @@ class SudokuCellView(
     private fun handleCellClick(button: MouseButton) {
         println("clicked cell ${row + 1}:${col + 1}")
 
-        when (controller.mode) {
-            GameMode.CREATION -> {
-                if (cell.value != null && button == MouseButton.SECONDARY) {
-                    cell.value = null
-                }
-            }
+        if (button != MouseButton.SECONDARY)
+            return
 
-            GameMode.RIDDLE -> {
-                if (!cell.isMutable)
-                    return
+        if (controller.mode == GameMode.RIDDLE && !cell.isMutable)
+            return
 
-                if (cell.value != null) {
-                    if (button == MouseButton.SECONDARY) {
-                        cell.value = null
-                        cell.isMutable = true
-                        cell.clearCandidates()
-                    }
-                } else {
-                    // TODO: if (!riddleGridCreated) createRiddleGrid(cell)
-                }
-            }
-        }
-
+        cell.value = null
         updateView()
     }
 

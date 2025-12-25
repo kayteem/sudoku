@@ -1,5 +1,6 @@
 package ui
 
+import controller.SudokuController
 import javafx.geometry.Pos
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.GridPane
@@ -11,7 +12,7 @@ import model.GameMode
 import model.SudokuCell
 
 class CandidatesGridView(
-    private val gameMode: GameMode,
+    private val controller: SudokuController,
     private val cell: SudokuCell,
     private val updateParentCallback: () -> Unit
 ) : GridPane() {
@@ -55,13 +56,12 @@ class CandidatesGridView(
         add(label, c, r)
 
         label.setOnMouseReleased { mouseEvent ->
-            println("clicked candidate")
+            println("clicked candidate $i")
 
-            when (gameMode) {
+            when (controller.mode) {
                 GameMode.CREATION -> {
                     cell.value = i
                     cell.isMutable = false
-                    cell.clearCandidates()
                 }
                 GameMode.RIDDLE -> {
                     if (!cell.isMutable)
@@ -69,14 +69,19 @@ class CandidatesGridView(
 
                     when (mouseEvent.button) {
                         MouseButton.PRIMARY -> {
-
+                            if (cell.candidates.contains(i)) {
+                                cell.value = i
+                                cell.isMutable = true
+                            }
+                            else {
+                                cell.addCandidate(i)
+                            }
                         }
                         MouseButton.SECONDARY -> {
-
+                            cell.removeCandidate(i)
                         }
                         else -> {}
                     }
-                    cell.toggleCandidate(i)
                 }
             }
 
