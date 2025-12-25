@@ -4,6 +4,7 @@ import controller.SudokuController
 import javafx.geometry.Pos
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.StackPane
+import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
 import javafx.scene.text.Text
@@ -17,7 +18,7 @@ class SudokuCellView(
     private val col: Int
 ) : StackPane() {
 
-    private val FONT_GIVEN_VALUE: Font = Font.font("System", FontWeight.EXTRA_BOLD, 24.0)
+    private val FONT_GIVEN_VALUE: Font = Font.font("System", FontWeight.NORMAL, 24.0)
     private val FONT_USER_VALUE: Font = Font.font("System", FontWeight.NORMAL, 24.0)
 
     private val cell: SudokuCell
@@ -66,7 +67,14 @@ class SudokuCellView(
         // value defined? show value and hide candidates!
         if (cell.value != null) {
             valueText.text = cell.value.toString()
-            valueText.font = if (cell.isMutable) FONT_USER_VALUE else FONT_GIVEN_VALUE
+            if (cell.isMutable) {
+                valueText.font = FONT_USER_VALUE
+                valueText.fill = Color.BLACK
+            }
+            else {
+                valueText.font = FONT_GIVEN_VALUE
+                valueText.fill = Color.RED
+            }
             valueText.isVisible = true
 
             candidatesGridView.hide()
