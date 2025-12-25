@@ -7,7 +7,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
 import model.GameMode
 
-class SudokuView : BorderPane() {
+class SudokuGridView : BorderPane() {
 
     private val controller = SudokuController()
     private val grid = GridPane()

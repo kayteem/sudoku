@@ -3,9 +3,7 @@ package ui
 import controller.SudokuController
 import javafx.geometry.Pos
 import javafx.scene.input.MouseButton
-import javafx.scene.layout.GridPane
 import javafx.scene.layout.StackPane
-import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
 import javafx.scene.text.Text
@@ -21,11 +19,10 @@ class SudokuCellView(
 
     private val FONT_GIVEN_VALUE: Font = Font.font("System", FontWeight.EXTRA_BOLD, 24.0)
     private val FONT_USER_VALUE: Font = Font.font("System", FontWeight.NORMAL, 24.0)
-    private val FONT_CANDIDATE: Font = Font.font("System", FontWeight.NORMAL, 14.0)
 
     private val cell: SudokuCell
     private val valueText: Text
-    private val candidateGrid: GridPane
+    private val candidatesGridView: CandidatesGridView
 
     init {
         initStackPane()
@@ -35,39 +32,40 @@ class SudokuCellView(
         valueText = Text()
         valueText.font = Font.font(24.0)
 
-        candidateGrid = GridPane()
-        candidateGrid.hgap = 6.0
-        candidateGrid.vgap = 3.0
-        candidateGrid.alignment = Pos.CENTER
-        candidateGrid.prefWidth = 50.0
-        candidateGrid.prefHeight = 50.0
+        candidatesGridView = CandidatesGridView(
+            gameMode = controller.mode,
+            cell = cell,
+            updateParentCallback = ::updateView
+        )
 
-        children.addAll(candidateGrid, valueText)
+        children.addAll(candidatesGridView, valueText)
 
-        setOnMouseClicked { event ->
-            handleClick(event.button)
+        setOnMouseReleased { event ->
+            handleCellClick(event.button)
         }
 
         updateView()
     }
 
-    private fun handleClick(button: MouseButton) {
+    private fun handleCellClick(button: MouseButton) {
+        println("clicked cell ${row + 1}:${col + 1}")
+
         when (controller.mode) {
             GameMode.CREATION -> {
-                if (cell.value != null) {
+                if (cell.value != null && button == MouseButton.SECONDARY) {
                     cell.value = null
                 }
             }
 
             GameMode.RIDDLE -> {
-                if (cell.isMutable) return  // feste Zellen nicht verändern
+                if (!cell.isMutable)
+                    return
+
                 if (cell.value != null) {
                     if (button == MouseButton.SECONDARY) {
-                        // Wert zurücksetzen, vorherige Kandidaten bleiben erhalten
-                        // TODO: val oldCandidates = cell.activeCandidates.toSet()
                         cell.value = null
-                        // TODO: cell.activeCandidates.clear()
-                        // TODO: cell.activeCandidates.addAll(oldCandidates)
+                        cell.isMutable = true
+                        cell.clearCandidates()
                     }
                 } else {
                     // TODO: if (!riddleGridCreated) createRiddleGrid(cell)
@@ -79,6 +77,7 @@ class SudokuCellView(
     }
 
     private fun updateView() {
+        println("updating cell ${row + 1}:${col + 1}")
 
         // value defined? show value and hide candidates!
         if (cell.value != null) {
@@ -86,8 +85,7 @@ class SudokuCellView(
             valueText.font = if (cell.isMutable) FONT_USER_VALUE else FONT_GIVEN_VALUE
             valueText.isVisible = true
 
-            candidateGrid.children.clear()
-            candidateGrid.isVisible = false
+            candidatesGridView.hide()
         }
 
         // value undefined - hide value and show candidates!
@@ -95,53 +93,7 @@ class SudokuCellView(
             valueText.text = ""
             valueText.isVisible = false
 
-            populateCandidatesGrid()
-            candidateGrid.isVisible = true
-        }
-    }
-
-    private fun populateCandidatesGrid() {
-        candidateGrid.children.clear()
-
-        for (i in 1..9) {
-            createCandidateCell(i)
-        }
-    }
-
-    private fun createCandidateCell(i: Int) {
-        val label = Text(i.toString())
-        label.font = FONT_CANDIDATE
-        label.fill = if (i in cell.candidates) Color.BLACK else Color.DARKGRAY
-
-        val r = (i - 1) / 3
-        val c = (i - 1) % 3
-        candidateGrid.add(label, c, r)
-
-        label.setOnMouseClicked { mouseEvent ->
-            when (controller.mode) {
-                GameMode.CREATION -> {
-                    cell.value = i
-                    cell.isMutable = false
-                    cell.clearCandidates()
-                }
-                GameMode.RIDDLE -> {
-                    if (!cell.isMutable)
-                        return@setOnMouseClicked
-
-                    when (mouseEvent.button) {
-                        MouseButton.PRIMARY -> {
-
-                        }
-                        MouseButton.SECONDARY -> {
-
-                        }
-                        else -> {}
-                    }
-                    cell.toggleCandidate(i)
-                }
-            }
-
-            updateView()
+            candidatesGridView.populate()
         }
     }
 
