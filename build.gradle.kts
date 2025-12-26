@@ -21,7 +21,7 @@ javafx {
 }
 
 application {
-    mainClass.set("app.SudokuAppKt")
+    mainClass.set("app.Main")
 }
 
 dependencies {

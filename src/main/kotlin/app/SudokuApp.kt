@@ -14,7 +14,3 @@ class SudokuApp : Application() {
         stage.show()
     }
 }
-
-fun main() {
-    Application.launch(SudokuApp::class.java)
-}
