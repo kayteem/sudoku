@@ -9,7 +9,7 @@ class SudokuApp : Application() {
 
     override fun start(stage: Stage) {
         val root = SudokuGridView()
-        stage.scene = Scene(root, 600.0, 650.0)
+        stage.scene = Scene(root, 650.0, 650.0)
         stage.title = "Sudoku"
         stage.show()
     }
